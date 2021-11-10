@@ -9,7 +9,9 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -62,6 +64,19 @@ func main() {
 			"title": "posts/index",
 		})
 	})
+	// 提交表单
+	r.GET("/login", func(context *gin.Context) {
+		context.HTML(http.StatusOK, "login/index.html", gin.H{
+
+		})
+	})
+	r.POST("/form", func(c *gin.Context) {
+		types := c.DefaultPostForm("type", "post")
+		username := c.PostForm("username")
+		password := c.PostForm("userpassword")
+		// c.String(http.StatusOK, fmt.Sprintf("username:%s,password:%s,type:%s", username, password, types))
+		c.String(http.StatusOK, fmt.Sprintf("username:%s,password:%s,type:%s", username, password, types))
+	})
 
 	// 自定义模板函数
 	// r.SetFuncMap(template.FuncMap{
@@ -74,6 +89,22 @@ func main() {
 	// r.GET("/index", func(c *gin.Context) {
 	// 	c.HTML(http.StatusOK, "index.tmpl", "<a href='https://holychan.com'>Holy的博客</a>")
 	// })
+
+	// API参数
+	r.GET("/user/:name/*action", func(c *gin.Context) {
+		name := c.Param("name")
+		action := c.Param("action")
+		// 截取
+		action = strings.Trim(action, "/")
+		c.String(http.StatusOK, name + "is" + action)
+	})
+	
+	// URL参数
+	r.GET("/user", func(context *gin.Context) {
+		name := context.DefaultQuery("name", "孤灯") // 不传入参数的默认查询
+		context.String(http.StatusOK, fmt.Sprintf("hello %s", name))
+	})
+	// http://127.0.0.1:8080/user?name=123
 
 	r.Run() // 启动HTTP服务，默认在127.0.0.1:8080启动服务
 }
