@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func main()  {
+func main() {
 	router := gin.Default()
 	router.LoadHTMLGlob("templates/*")
 	router.GET("/uploadsfile", func(context *gin.Context) {
